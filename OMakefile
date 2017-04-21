@@ -51,7 +51,7 @@
 USE_OCAMLFIND = true
 
 OCAMLPACKS[] =
-   #pack1
+   batteries
    #pack2
 
 if $(not $(OCAMLFIND_EXISTS))
@@ -107,6 +107,11 @@ NATIVE_ENABLED = $(OCAMLOPT_EXISTS)
 #
 
 FILES[] =
+     base
+     job
+     village
+     simulate
+     manage
      main
 #    file1
 #    file2
