@@ -20,6 +20,7 @@ module Job : sig
   val job_string : t -> string
   val category_string : category -> string
   val random_category : unit -> category
+  val category_of_job : t -> category
 
   (* 全てのカテゴリ *)
   val categories : category list
@@ -55,6 +56,15 @@ end = struct
     TWerewolf;
     TFox
   ]
+
+  let category_of_job = function
+    | Villager
+    | Diviner
+    | Saver _
+    | Guard -> TVillage
+    | Mad -> TMad
+    | Werewolf -> TWerewolf
+    | Fox -> TFox
 
   let random_category () =
     List.at categories @@  Random.int @@ List.length categories 

@@ -5,7 +5,7 @@ open Simulate
 
 module Manage : sig
 
-  val run : int -> Village.config
+  val run : int -> (unit -> Job.t list) -> unit
 
 end = struct
 
@@ -20,11 +20,11 @@ end = struct
         def
 
   (* 1 periodで何回村を回すか *)
-  let period_num = 30
+  let period_num = 100
   (* 何回runするか *)
   let run_num = 100
 
-  let period config =
+  let period config makereqs =
     (* 勝率のカウント *)
     let init_count =
       List.fold_left
@@ -35,7 +35,7 @@ end = struct
     let rec one count = function
       | 0 -> count
       | remains -> 
-          let simm = Simulate.initSimulation config in
+          let simm = Simulate.initSimulation config (makereqs ()) in
           let j = Simulate.simulate simm in
           let count' =
             Map.modify
@@ -74,7 +74,7 @@ end = struct
 
   (* 勝率を受け取ってconfigを調整 *)
   let rec adjust wins config =
-    if Map.find Simulate.JFox wins > 0.08 then
+    if Map.find Simulate.JFox wins > 0.1 then
       (* 狐が勝ちすぎ *)
       begin
         let addu = random_choose Job.TVillage Job.categories in
@@ -110,11 +110,11 @@ end = struct
 
 
   (* n人村に対して動作 *)
-  let run n =
+  let run n makereqs =
     let rec one config = function
       | 0 -> config
       | remains ->
-          let wins = period config in
+          let wins = period config makereqs in
           (* 勝率に変換 *)
           let wins' =
             Map.map
@@ -139,5 +139,5 @@ end = struct
         (fun c v ->
            Printf.printf "%s: %d\n" (Job.category_string c) v)
         config;
-      config
+      ()
 end
